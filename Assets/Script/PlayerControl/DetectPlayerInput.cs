@@ -47,18 +47,29 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
             line.SetPosition(1, touch[i] + flickDir[i]*2f);
         }
     }
-
+    public GameObject IsHitBreak(Vector2 touchWorldPosition)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(touchWorldPosition, Vector2.zero);
+        if (hit.collider !=null &&hit.collider.CompareTag("Brick"))
+        {
+            return hit.collider.gameObject;
+        }
+        return null;
+    }
     private void TypeDreawLine(List<Vector2> target,Color color)
     {
         for (int i = 0; i < target.Count; ++i)
         {
-            if (DetectCenterDistance(target[i]))
+            LineRenderer line = GameObjectPool.Instance.CreateObject("Line", Resources.Load("Prefabs/Line") as GameObject, Vector3.zero, Quaternion.identity).GetComponent<LineRenderer>();
+            line.startColor = color;
+            line.endColor = color;
+            line.SetPosition(0, circleCenter.position);
+            line.SetPosition(1, target[i]);
+            GameObject brick = IsHitBreak(target[i]);
+            if (brick != null && brick.GetComponent<MusicBreak>().brickType != BrickType.Flick)
             {
-                LineRenderer line = GameObjectPool.Instance.CreateObject("Line", Resources.Load("Prefabs/Line") as GameObject, Vector3.zero, Quaternion.identity).GetComponent<LineRenderer>();
-                line.startColor = color;
-                line.endColor = color;
-                line.SetPosition(0, circleCenter.position);
-                line.SetPosition(1, target[i]);
+                Debug.Log(brick.GetComponent<MusicBreak>().PlayerPerformance(circleCenter.position, distance));
+                GameObjectPool.Instance.CollectObject(brick);
             }
         }
     }
@@ -75,15 +86,6 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
             lineRenderer.SetPosition(i,new Vector2(x,y));
             angle += increment;
         }
-    }
-    private bool DetectCenterDistance(Vector2 pos)
-    {
-        float currentDistance = Vector2.Distance(pos, circleCenter.position);
-        if (Mathf.Abs(currentDistance - distance)<0.5f)
-        {
-            return true;
-        }
-        return false;
     }
 
     private void StoreInput()
@@ -103,6 +105,7 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
             if (finger.phase == TouchPhase.Began)
             {
                 singleClick.Add(pos);
+                
                 Debug.Log("began");
             }
             if (finger.phase == TouchPhase.Moved)

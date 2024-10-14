@@ -74,6 +74,14 @@ public class LoadBricks : MonoBehaviour
         }
         return result;
     }
+    public void BricksOnTrackRemove(Transform remove)
+    {
+        foreach (List<Transform> list in bricksOnTrack.Values)
+        {
+            if (list.Contains(remove))
+                list.Remove(remove);
+        }
+    }
     private void CreateBrickInit()
     {
         for (int i = 0; i < singleClickBricksTime.Count; i++)

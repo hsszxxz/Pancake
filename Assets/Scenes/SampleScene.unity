@@ -197,17 +197,16 @@ MonoBehaviour:
   flickSpeed: 1
   flickAccelerate: 0.2
   flickBrickPrefab: {fileID: 4950439022650666848, guid: 820f5d87396002842a87acf19e2e7510, type: 3}
-  flickBricksTime: []
-  flickBricksTrack: 
+  flickBricksTime:
+  - 5
+  flickBricksTrack: 02000000
   touchSpeed: 1
   touchAccelerate: 0.2
   angleSpeed: 0.2
   touchBrickPrefab: {fileID: 4950439022650666848, guid: 1540b65bd205c444282ab5c9130c202f, type: 3}
-  touchBricksTime:
-  - 6
-  touchBricksTrack: 01000000
-  touchBricksWalkTime:
-  - 2
+  touchBricksTime: []
+  touchBricksTrack: 
+  touchBricksWalkTime: []
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

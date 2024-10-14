@@ -36,16 +36,17 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
         //FlickDetect();
         DetectSingleClick();
         DetectTouch();
+        FlickDetect();
     }
     private void FlickDetect()
     {
-        for (int i = 0; i < flickDir.Count; ++i)
+        for (int i = 0; i < lastTouch.Count; ++i)
         {
-            Transform brick = loadBricks.GetFormestTransform(potStage.TrackNum(singleClick[i]));
+            Transform brick = loadBricks.GetFormestTransform(potStage.TrackNum(lastTouch[i]));
             if (brick == null)
                 return;
             MusicBreak musicBreak = brick.GetComponent<MusicBreak>();
-            if (musicBreak.brickType == BrickType.SingleClick)
+            if (musicBreak.brickType == BrickType.Flick)
             {
                 DetectMessage message = new DetectMessage()
                 {
@@ -54,6 +55,7 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                 };
                 Performance performance = chargeNum.PerformanceCharge(message);
                 Debug.Log(performance);
+                loadBricks.BricksOnTrackRemove(brick);
                 GameObjectPool.Instance.CollectObject(brick.gameObject);
             }
         }
@@ -84,6 +86,7 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                 };
                 Performance performance = chargeNum.PerformanceCharge(message);
                 Debug.Log(performance);
+                loadBricks.BricksOnTrackRemove(brick);
                 GameObjectPool.Instance.CollectObject(brick.gameObject);
             }
         }
@@ -124,6 +127,7 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                 musicBreak.isTouch = true;
                 Debug.Log("1:"+performance);
                 message.ShouldTime += musicBreak.WalkTime;
+                loadBricks.BricksOnTrackRemove(brick);
                 if (!releaseTouchBrick.ContainsKey(brick))
                     releaseTouchBrick.Add(brick, message);
             }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 public class LoadBricks : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class LoadBricks : MonoBehaviour
     [HideInInspector]
     public PotStage potStage;
 
+    [Header("Tap")]
     public float singleSpeed;
     public float singleAccelerate;
     public GameObject singleBrickPrefab;
@@ -15,6 +17,7 @@ public class LoadBricks : MonoBehaviour
     [Tooltip("单击类型音乐块的运动轨道")]
     public List<int> singleClickBricksTrack;
 
+    [Header("Flick")]
     public float flickSpeed;
     public float flickAccelerate;
     public GameObject flickBrickPrefab;
@@ -23,6 +26,7 @@ public class LoadBricks : MonoBehaviour
     [Tooltip("Flick类型音乐块的运动轨道")]
     public List<int> flickBricksTrack;
 
+    [Header("Hold")]
     public float touchSpeed;
     public float touchAccelerate;
     public float angleSpeed;

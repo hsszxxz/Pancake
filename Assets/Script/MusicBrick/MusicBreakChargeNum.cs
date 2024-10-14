@@ -7,25 +7,26 @@ public class DetectMessage
 [CreateAssetMenu(menuName = "MusicBreakChargeNum")]
 public class MusicBreakChargeNum :ScriptableObject
 {
-    [Tooltip("在多少秒误差之内是完美")]
-    public float PerfectTimeOffset;
-    [Tooltip("在多少秒误差之内是不错")]
-    public float GreatTimeOffset;
-    [Tooltip("在多少秒误差之内是一般")]
-    public float NormalTimeOffset;
+    [Tooltip("在多少帧误差之内是完美")]
+    public int PerfectTimeOffset;
+    [Tooltip("在多少帧误差之内是不错")]
+    public int GreatTimeOffset;
+    [Tooltip("在多少帧误差之内是一般")]
+    public int NormalTimeOffset;
     public Performance PerformanceCharge(DetectMessage message)
     {
 
         float offset = Mathf.Abs(message.ActuallyTime - message.ShouldTime);
-        if (offset <= PerfectTimeOffset)
+        int zhen = (int)(offset / 0.02f);
+        if (zhen <= PerfectTimeOffset)
         {
             return Performance.Perfect;
         }
-        else if (offset <= GreatTimeOffset)
+        else if (zhen <= GreatTimeOffset)
         {
             return Performance.Great;
         }
-        else if (offset <= NormalTimeOffset)
+        else if (zhen <= NormalTimeOffset)
         {
             return Performance.Normal;
         }

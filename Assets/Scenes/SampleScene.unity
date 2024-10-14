@@ -172,9 +172,9 @@ MonoBehaviour:
   touch: []
   flickDir: []
   lastTouch: []
-  circleCenter: {fileID: 1999330828}
-  distance: 2
-  lineRenderer: {fileID: 1073147577}
+  cancelTouch: []
+  stage: {fileID: 1999330828}
+  chargeNum: {fileID: 11400000, guid: e00e550154564024ba8489548a1f0ff1, type: 2}
 --- !u!114 &278780840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,14 +187,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8ef7695df4eced40914157534a5d1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  accelerate: 0.5
-  musicTrackStartPoint:
-  - {fileID: 835530124}
-  brickPrefab: {fileID: 4950439022650666848, guid: dab53e4f7b21bff48b7984833a5a7152, type: 3}
-  singleClickBricksTime:
+  center: {fileID: 1999330828}
+  potStage: {fileID: 0}
+  singleSpeed: 1
+  singleAccelerate: 0.2
+  singleBrickPrefab: {fileID: 4950439022650666848, guid: dab53e4f7b21bff48b7984833a5a7152, type: 3}
+  singleClickBricksTime: []
+  singleClickBricksTrack: 
+  flickSpeed: 1
+  flickAccelerate: 0.2
+  flickBrickPrefab: {fileID: 4950439022650666848, guid: 820f5d87396002842a87acf19e2e7510, type: 3}
+  flickBricksTime: []
+  flickBricksTrack: 
+  touchSpeed: 1
+  touchAccelerate: 0.2
+  angleSpeed: 0.2
+  touchBrickPrefab: {fileID: 4950439022650666848, guid: 1540b65bd205c444282ab5c9130c202f, type: 3}
+  touchBricksTime:
+  - 6
+  touchBricksTrack: 01000000
+  touchBricksWalkTime:
   - 2
-  singleClickBricksTrack: 00000000
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,37 +295,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &835530123
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 835530124}
-  m_Layer: 0
-  m_Name: GameObject (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &835530124
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 835530123}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -447,12 +429,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1073147576}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1999330828}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1999330826
 GameObject:
@@ -464,6 +446,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1999330828}
   - component: {fileID: 1999330827}
+  - component: {fileID: 1999330829}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -535,9 +518,24 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1073147578}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1999330829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999330826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8506de73dc9a3c145b4bfb660f63a016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
+  trackTarget: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -545,5 +543,3 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 1999330828}
   - {fileID: 278780838}
-  - {fileID: 1073147578}
-  - {fileID: 835530124}

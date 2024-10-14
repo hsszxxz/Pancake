@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
@@ -12,82 +13,122 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
     public List<Vector2> flickDir = new List<Vector2>();
     [HideInInspector]
     public List<Vector2>lastTouch = new List<Vector2>();
+    [HideInInspector]
+    public List<Vector2> cancelTouch = new List<Vector2>();
 
+    public Transform stage;
+    private PotStage potStage;
+    private LoadBricks loadBricks;
+    private Dictionary<Transform,DetectMessage> releaseTouchBrick = new Dictionary<Transform, DetectMessage>();
 
-    public Transform circleCenter;
-    public float distance = 1.0f;
+    public MusicBreakChargeNum chargeNum;
 
-    public LineRenderer lineRenderer;
     private float currentTime=0;
     private void Start()
     {
-        DrawDetectArea();
+        potStage = stage.GetComponent<PotStage>();
+        loadBricks = GetComponent<LoadBricks>();
     }
     private void Update()
     {
         currentTime += Time.deltaTime;
-        if (currentTime> 0.5f)
-        {
-            GameObjectPool.Instance.Clear("Line");
-            currentTime = 0;
-        }
         StoreInput();
-        TypeDreawLine(singleClick, Color.white);
-        TypeDreawLine(touch, Color.yellow);
-        FlickDetect();
+        //FlickDetect();
+        DetectSingleClick();
+        DetectTouch();
     }
     private void FlickDetect()
     {
         for (int i = 0; i < flickDir.Count; ++i)
         {
-            LineRenderer line = GameObjectPool.Instance.CreateObject("Line", Resources.Load("Prefabs/Line") as GameObject, Vector3.zero, Quaternion.identity).GetComponent<LineRenderer>();
-            line.startColor = Color.green;
-            line.endColor = Color.green;
-            line.SetPosition(0, touch[i]);
-            line.SetPosition(1, touch[i] + flickDir[i]*2f);
+            Transform brick = loadBricks.GetFormestTransform(potStage.TrackNum(singleClick[i]));
+            if (brick == null)
+                return;
+            MusicBreak musicBreak = brick.GetComponent<MusicBreak>();
+            if (musicBreak.brickType == BrickType.SingleClick)
+            {
+                DetectMessage message = new DetectMessage()
+                {
+                    ShouldTime = musicBreak.shouldTime,
+                    ActuallyTime = currentTime
+                };
+                Performance performance = chargeNum.PerformanceCharge(message);
+                Debug.Log(performance);
+                GameObjectPool.Instance.CollectObject(brick.gameObject);
+            }
         }
     }
-    public GameObject IsHitBreak(Vector2 touchWorldPosition)
+    public GameObject IsHitTouchBrick(Vector2 touchWorldPosition)
     {
         RaycastHit2D hit = Physics2D.Raycast(touchWorldPosition, Vector2.zero);
-        if (hit.collider !=null &&hit.collider.CompareTag("Brick"))
+        if (hit.collider != null && hit.collider.CompareTag("TouchBrick"))
         {
             return hit.collider.gameObject;
         }
         return null;
     }
-    private void TypeDreawLine(List<Vector2> target,Color color)
+    private void DetectSingleClick()
     {
-        for (int i = 0; i < target.Count; ++i)
+        for (int i = 0; i < singleClick.Count; ++i)
         {
-            LineRenderer line = GameObjectPool.Instance.CreateObject("Line", Resources.Load("Prefabs/Line") as GameObject, Vector3.zero, Quaternion.identity).GetComponent<LineRenderer>();
-            line.startColor = color;
-            line.endColor = color;
-            line.SetPosition(0, circleCenter.position);
-            line.SetPosition(1, target[i]);
-            GameObject brick = IsHitBreak(target[i]);
-            if (brick != null && brick.GetComponent<MusicBreak>().brickType != BrickType.Flick)
+            Transform brick = loadBricks.GetFormestTransform(potStage.TrackNum(singleClick[i]));
+            if (brick == null)
+                return;
+            MusicBreak musicBreak = brick.GetComponent<MusicBreak>();
+            if (musicBreak.brickType == BrickType.SingleClick)
             {
-                Debug.Log(brick.GetComponent<MusicBreak>().PlayerPerformance(circleCenter.position, distance));
-                GameObjectPool.Instance.CollectObject(brick);
+                DetectMessage message = new DetectMessage()
+                {
+                    ShouldTime = musicBreak.shouldTime,
+                    ActuallyTime = currentTime
+                };
+                Performance performance = chargeNum.PerformanceCharge(message);
+                Debug.Log(performance);
+                GameObjectPool.Instance.CollectObject(brick.gameObject);
             }
         }
     }
-
-    private void DrawDetectArea()
+    private Transform NearestTouchBrick(float currentTime)
     {
-        lineRenderer.positionCount = 100;
-        float angle = 0f;
-        float increment = 3.6f;
-        for (int i = 0; i < 100; i++)
+        Transform target = null;
+        float offSetTimeMin = 0;
+        foreach (Transform t in releaseTouchBrick.Keys)
         {
-            float x = Mathf.Sin(angle*Mathf.Deg2Rad)*distance + circleCenter.position.x;
-            float y = Mathf.Cos(angle*Mathf.Deg2Rad)*distance+circleCenter.position.y;
-            lineRenderer.SetPosition(i,new Vector2(x,y));
-            angle += increment;
+            float offTime =Mathf.Abs(releaseTouchBrick[t].ShouldTime-currentTime);
+            if (target == null||offTime<offSetTimeMin)
+            {
+                target = t;
+                offSetTimeMin = offTime;
+            }
+        }
+        if (offSetTimeMin>2f)
+            return null;
+        return target;
+    }
+    private void DetectTouch()
+    {
+        for (int i = 0; i < touch.Count; ++i)
+        {
+            Transform brick = loadBricks.GetFormestTransform(potStage.TrackNum(touch[i]));
+            if (brick == null ||brick.tag != "TouchBrick")
+                return;
+            TouchMusicBreak musicBreak = brick.GetComponent<TouchMusicBreak>();
+            if (musicBreak.isTouch==false)
+            {
+                DetectMessage message = new DetectMessage()
+                {
+                    ShouldTime = musicBreak.shouldTime,
+                    ActuallyTime = currentTime
+                };
+                Performance performance = chargeNum.PerformanceCharge(message);
+                musicBreak.isTouch = true;
+                Debug.Log("1:"+performance);
+                message.ShouldTime += musicBreak.WalkTime;
+                if (!releaseTouchBrick.ContainsKey(brick))
+                    releaseTouchBrick.Add(brick, message);
+            }
         }
     }
-
     private void StoreInput()
     {
         lastTouch.Clear();
@@ -98,6 +139,7 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
         singleClick.Clear();
         touch.Clear();
         flickDir.Clear();
+        cancelTouch.Clear();
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch finger = Input.GetTouch(i);
@@ -105,8 +147,17 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
             if (finger.phase == TouchPhase.Began)
             {
                 singleClick.Add(pos);
-                
-                Debug.Log("began");
+            }
+            if (finger.phase == TouchPhase.Ended)
+            {
+                Transform target = NearestTouchBrick(currentTime);
+                if (target!=null)
+                {
+                    releaseTouchBrick[target].ActuallyTime = currentTime;
+                    Performance performance = chargeNum.PerformanceCharge(releaseTouchBrick[target]);
+                    Debug.Log("2:"+performance);
+                    releaseTouchBrick.Remove(target);
+                }
             }
             if (finger.phase == TouchPhase.Moved)
             {

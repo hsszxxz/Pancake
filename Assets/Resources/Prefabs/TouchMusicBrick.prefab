@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8691322088807194184}
   - component: {fileID: 8991269383820373770}
-  - component: {fileID: 8089927588540156825}
   - component: {fileID: 5345751289419515657}
+  - component: {fileID: -1229728554485067149}
   m_Layer: 0
-  m_Name: MusicBrick
-  m_TagString: Brick
+  m_Name: TouchMusicBrick
+  m_TagString: TouchBrick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86,19 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8089927588540156825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4950439022650666848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f39f46e091639a49ac3b6f05a624b1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  brickType: 0
 --- !u!58 &5345751289419515657
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -134,3 +121,22 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0.21133333}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-1229728554485067149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4950439022650666848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cc05f30310ff5d4ba2cb592a932faeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brickType: 0
+  shouldTime: 0
+  accelerate: 0
+  targetPos: {x: 0, y: 0}
+  WalkTime: 0
+  center: {fileID: 0}
+  radius: 0

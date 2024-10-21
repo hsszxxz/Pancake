@@ -20,6 +20,10 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
     private PotStage potStage;
     private LoadBricks loadBricks;
     private Dictionary<Transform,DetectMessage> releaseTouchBrick = new Dictionary<Transform, DetectMessage>();
+    [Tooltip("µ•ª˜£¨touch£¨flick“Ù–ß")]
+    public List<AudioClip> keyValuePairs = new List<AudioClip>();
+
+    private AudioSource audioSource;
 
     public MusicBreakChargeNum chargeNum;
 
@@ -33,10 +37,10 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
     {
         currentTime += Time.deltaTime;
         StoreInput();
-        //FlickDetect();
         DetectSingleClick();
         DetectTouch();
         FlickDetect();
+        audioSource = GetComponent<AudioSource>();
     }
     private void FlickDetect()
     {
@@ -54,7 +58,8 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                     ActuallyTime = currentTime
                 };
                 Performance performance = chargeNum.PerformanceCharge(message);
-                Debug.Log(performance);
+                audioSource.clip = keyValuePairs[3];
+                audioSource.Play();
                 loadBricks.BricksOnTrackRemove(brick);
                 GameObjectPool.Instance.CollectObject(brick.gameObject);
             }
@@ -85,7 +90,8 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                     ActuallyTime = currentTime
                 };
                 Performance performance = chargeNum.PerformanceCharge(message);
-                Debug.Log(performance);
+                audioSource.clip = keyValuePairs[0];
+                audioSource.Play();
                 loadBricks.BricksOnTrackRemove(brick);
                 GameObjectPool.Instance.CollectObject(brick.gameObject);
             }
@@ -125,7 +131,8 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                 };
                 Performance performance = chargeNum.PerformanceCharge(message);
                 musicBreak.isTouch = true;
-                Debug.Log("1:"+performance);
+                audioSource.clip = keyValuePairs[1];
+                audioSource.Play();
                 message.ShouldTime += musicBreak.WalkTime;
                 loadBricks.BricksOnTrackRemove(brick);
                 if (!releaseTouchBrick.ContainsKey(brick))
@@ -159,7 +166,6 @@ public class DetectPlayerInput : MonoSingleton<DetectPlayerInput>
                 {
                     releaseTouchBrick[target].ActuallyTime = currentTime;
                     Performance performance = chargeNum.PerformanceCharge(releaseTouchBrick[target]);
-                    Debug.Log("2:"+performance);
                     releaseTouchBrick.Remove(target);
                 }
             }
